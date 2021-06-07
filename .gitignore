@@ -1,0 +1,7 @@
+node_modules
+.idea
+/stats.json
+.DS_Store
+coverage
+test
+ignore

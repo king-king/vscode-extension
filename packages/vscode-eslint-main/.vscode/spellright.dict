@@ -1,0 +1,8 @@
+eslintignore
+eslint
+vscode-languageclient
+vscode-languageserver-node
+eslintrc
+json
+pnpm
+cwd

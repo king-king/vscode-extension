@@ -1,0 +1,10 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# this files must always use LF for tools to work
+*.js eol=lf
+*.jsx eol=lf
+*.css eol=lf
+*.scss eol=lf
+*.md eol=lf
+*.snap eol=lf
