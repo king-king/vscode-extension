@@ -9,9 +9,7 @@
 	"categories": [
 		"Other"
 	],
-	"activationEvents": [
-		"onCommand:helloworld.helloWorld"
-	],
+	"activationEvents": ["*"],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
