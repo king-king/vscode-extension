@@ -59,7 +59,7 @@
             }],
             "view/item/context": [{
                     "command": "nodeDependencies.editDep",
-                    "when": "view == nodeDependencies",
+                    "when": "view == nodeDependencies && viewItem == private",
                     "group": "inline"
                 },
                 {

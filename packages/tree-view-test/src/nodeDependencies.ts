@@ -89,6 +89,8 @@ class Dependency extends vscode.TreeItem {
         super(label, collapsibleState);
         this.tooltip = `${this.label}-${this.version}`;
         this.description = this.version;
+        this.contextValue = label.indexOf('@') !== -1 ? 'private' : 'public';
+
     }
 
     iconPath = {
