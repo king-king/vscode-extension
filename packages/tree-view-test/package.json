@@ -25,7 +25,14 @@
                 "light": "resources/light/refresh.svg",
                 "dark": "resources/dark/refresh.svg"
             }
-        }]
+        }],
+        "menus": {
+            "view/title": [{
+                "command": "nodeDependencies.refreshEntry",
+                "when": "view == nodeDependencies",
+                "group": "navigation"
+            }]
+        }
     },
     "scripts": {
         "vscode:prepublish": "yarn run package",
