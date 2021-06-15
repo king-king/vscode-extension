@@ -33,24 +33,24 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
     }
 
     /**
-     * Given the path to package.json, read all its dependencies and devDependencies.
+     * Given the path to package.json, read all its dependencies
      */
     private getDepsInPackageJson(packageJsonPath: string): Dependency[] {
         if (this.pathExists(packageJsonPath)) {
-            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-
             const toDep = (moduleName: string, version: string): Dependency => {
-                if (this.pathExists(path.join(this.workspaceRoot, 'node_modules', moduleName))) {
-                    return new Dependency(
-                        moduleName,
-                        version,
-                        vscode.TreeItemCollapsibleState.Collapsed
-                    );
-                } else {
-                    return new Dependency(moduleName, version, vscode.TreeItemCollapsibleState.None);
+                const depPackageJsonPath = path.join(this.workspaceRoot, 'node_modules', moduleName, 'package.json');
+                let collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+                if (this.pathExists(depPackageJsonPath)) {
+                    const depPackageJson = JSON.parse(fs.readFileSync(depPackageJsonPath, 'utf-8'));
+                    // 如果依赖的代码包已经安装（node_modules有内容），且这个安装包本身有dependencies或devDependencies，才设置为可展开的
+                    if ((!depPackageJson.dependencies || Object.keys(depPackageJson.dependencies).length === 0) &&
+                        (!depPackageJson.devDependencies || Object.keys(depPackageJson.devDependencies).length === 0)) {
+                        collapsibleState = vscode.TreeItemCollapsibleState.None;
+                    }
                 }
+                return new Dependency(moduleName, version, collapsibleState);
             };
-
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
             const deps = packageJson.dependencies
                 ? Object.keys(packageJson.dependencies).map(dep =>
                     toDep(dep, packageJson.dependencies[dep])
