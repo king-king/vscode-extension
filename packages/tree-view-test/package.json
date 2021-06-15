@@ -17,7 +17,15 @@
                 "id": "nodeDependencies",
                 "name": "Node Dependencies"
             }]
-        }
+        },
+        "commands": [{
+            "command": "nodeDependencies.refreshEntry",
+            "title": "Refresh Dependence",
+            "icon": {
+                "light": "resources/light/refresh.svg",
+                "dark": "resources/dark/refresh.svg"
+            }
+        }]
     },
     "scripts": {
         "vscode:prepublish": "yarn run package",

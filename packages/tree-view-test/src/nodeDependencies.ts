@@ -3,12 +3,15 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class NodeDependenciesProvider implements vscode.TreeDataProvider<Dependency> {
+    private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined | null | void> = new vscode.EventEmitter<Dependency | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<Dependency | undefined | null | void> = this._onDidChangeTreeData.event;
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
     constructor(private workspaceRoot: string) { }
-
     getTreeItem(element: Dependency): vscode.TreeItem {
         return element;
     }
-
     getChildren(element?: Dependency): Thenable<Dependency[]> {
         if (!this.workspaceRoot) {
             vscode.window.showInformationMessage('No dependency in empty workspace');
