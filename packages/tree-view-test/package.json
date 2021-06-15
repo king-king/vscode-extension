@@ -13,9 +13,18 @@
     "main": "./dist/extension.js",
     "contributes": {
         "views": {
-            "explorer": [{
+            "package-explorer": [{
                 "id": "nodeDependencies",
-                "name": "Node Dependencies"
+                "name": "Node Dependencies",
+                "icon": "media/dep.svg",
+                "contextualTitle": "Package Explorer"
+            }]
+        },
+        "viewsContainers": {
+            "activitybar": [{
+                "id": "package-explorer",
+                "title": "Package Explorer",
+                "icon": "media/dep.svg"
             }]
         },
         "commands": [{
