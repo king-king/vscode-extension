@@ -19,12 +19,14 @@ export class NodeDependenciesProvider implements vscode.TreeDataProvider<Depende
         }
 
         if (element) {
+            // 子节点
             return Promise.resolve(
                 this.getDepsInPackageJson(
                     path.join(this.workspaceRoot, 'node_modules', element.label, 'package.json')
                 )
             );
         } else {
+            // 第一层级
             const packageJsonPath = path.join(this.workspaceRoot, 'package.json');
             if (this.pathExists(packageJsonPath)) {
                 return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));

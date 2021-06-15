@@ -12,6 +12,10 @@
     "activationEvents": ["onView:nodeDependencies"],
     "main": "./dist/extension.js",
     "contributes": {
+        "viewsWelcome": [{
+            "view": "nodeDependencies",
+            "contents": "没有发现依赖内容， [了解更多](https://www.npmjs.com/).\n[添加依赖](command:nodeDependencies.addEntry)"
+        }],
         "views": {
             "package-explorer": [{
                 "id": "nodeDependencies",
