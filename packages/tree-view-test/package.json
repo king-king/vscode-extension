@@ -14,10 +14,12 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
-		"commands": [{
-			"command": "helloword.helloWorld",
-			"title": "Clock"
-		}]
+		"commands": [
+			{
+				"command": "helloword.helloWorld",
+				"title": "Clock"
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run package",
