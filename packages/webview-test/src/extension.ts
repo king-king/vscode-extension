@@ -11,19 +11,22 @@ export function activate(context: vscode.ExtensionContext) {
                     enableScripts: true
                 }
             );
-
             panel.webview.html = getWebviewContent();
-
-            // Handle messages from the webview
-            panel.webview.onDidReceiveMessage(message => {
-                switch (message.command) {
-                    case 'alert':
-                        vscode.window.showErrorMessage(message.text);
-                        return;
-                }
-            }, undefined, context.subscriptions);
         })
     );
+    vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer());
+}
+
+class CatCodingSerializer implements vscode.WebviewPanelSerializer {
+    async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
+        // `state` is the state persisted using `setState` inside the webview
+        console.log(`Got state: ${state}`);
+        // Restore the content of our webview.
+        //
+        // Make sure we hold on to the `webviewPanel` passed in here and
+        // also restore any event listeners we need on it.
+        webviewPanel.webview.html = getWebviewContent();
+    }
 }
 
 function getWebviewContent() {

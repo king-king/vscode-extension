@@ -10,7 +10,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:catCoding.start"
+        "onCommand:catCoding.start",
+        "onWebviewPanel:catCoding"
     ],
     "main": "./dist/extension.js",
     "contributes": {
