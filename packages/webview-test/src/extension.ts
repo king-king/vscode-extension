@@ -1,40 +1,45 @@
 import * as vscode from 'vscode';
 
-export function activate(context: vscode.ExtensionContext) {
-    // Track currently webview panel
-    let currentPanel: vscode.WebviewPanel | undefined = undefined;
+const cats = {
+    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
+    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
+    'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
+};
 
+export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('catCoding.start', () => {
-            const columnToShowIn = vscode.window.activeTextEditor
-                ? vscode.window.activeTextEditor.viewColumn
-                : undefined;
+            const panel = vscode.window.createWebviewPanel(
+                'catCoding',
+                'Cat Coding',
+                vscode.ViewColumn.One,
+                {}
+            );
+            panel.webview.html = getWebviewContent('Coding Cat');
 
-            if (currentPanel) {
-                // If we already have a panel, show it in the target column
-                currentPanel.reveal(columnToShowIn);
-            } else {
-                // Otherwise, create a new panel
-                currentPanel = vscode.window.createWebviewPanel(
-                    'catCoding',
-                    'Cat Coding',
-                    columnToShowIn,
-                    {}
-                );
-                currentPanel.webview.html = getWebviewContent('Coding Cat');
-
-                // Reset when the current panel is closed
-                currentPanel.onDidDispose(
-                    () => {
-                        currentPanel = undefined;
-                        console.log('onDidDispose');
-                    },
-                    null,
-                    context.subscriptions
-                );
-            }
+            // Update contents based on view state changes
+            panel.onDidChangeViewState(e => {
+                const curPanel = e.webviewPanel;
+                console.log(panel.viewColumn, curPanel.viewColumn);
+                switch (curPanel.viewColumn) {
+                    case vscode.ViewColumn.One:
+                        updateWebviewForCat(curPanel, 'Coding Cat');
+                        return;
+                    case vscode.ViewColumn.Two:
+                        updateWebviewForCat(curPanel, 'Compiling Cat');
+                        return;
+                    case vscode.ViewColumn.Three:
+                        updateWebviewForCat(curPanel, 'Testing Cat');
+                        return;
+                }
+            }, null, context.subscriptions);
         })
     );
+}
+
+function updateWebviewForCat(panel: vscode.WebviewPanel, catName: keyof typeof cats) {
+    panel.title = catName;
+    panel.webview.html = getWebviewContent(catName);
 }
 
 function getWebviewContent(cat: keyof typeof cats) {
@@ -46,7 +51,7 @@ function getWebviewContent(cat: keyof typeof cats) {
     <title>Cat Coding</title>
 </head>
 <body>
-    <img src="https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif" width="300" />
+    <img src="${cats[cat]}" width="300" />
 </body>
 </html>`;
 }
