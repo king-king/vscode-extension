@@ -8,25 +8,13 @@ export function activate(context: vscode.ExtensionContext) {
                 'Cat Coding',
                 vscode.ViewColumn.One,
                 {
-                    enableScripts: true
+                    enableScripts: true,
+                    retainContextWhenHidden: true
                 }
             );
             panel.webview.html = getWebviewContent();
         })
     );
-    vscode.window.registerWebviewPanelSerializer('catCoding', new CatCodingSerializer());
-}
-
-class CatCodingSerializer implements vscode.WebviewPanelSerializer {
-    async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
-        // `state` is the state persisted using `setState` inside the webview
-        console.log(`Got state: ${state}`);
-        // Restore the content of our webview.
-        //
-        // Make sure we hold on to the `webviewPanel` passed in here and
-        // also restore any event listeners we need on it.
-        webviewPanel.webview.html = getWebviewContent();
-    }
 }
 
 function getWebviewContent() {
@@ -43,21 +31,12 @@ function getWebviewContent() {
     <h1 id="lines-of-code-counter">0</h1>
 
     <script>
-        (function() {
-            // 获取VS Code API 对象
-            const vscode = acquireVsCodeApi();
-            const counter = document.getElementById('lines-of-code-counter');
+        const counter = document.getElementById('lines-of-code-counter');
 
-            const previousState = vscode.getState();
-            let count = previousState ? previousState.count : 0;
-            counter.textContent = count;
-
-            setInterval(() => {
-                counter.textContent = count++;
-                // Update the saved state
-                vscode.setState({ count });
-            }, 100);
-        }())
+        let count = 0;
+        setInterval(() => {
+            counter.textContent = count++;
+        }, 100);
     </script>
 </body>
 </html>`;
