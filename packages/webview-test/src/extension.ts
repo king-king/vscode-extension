@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -9,18 +8,27 @@ export function activate(context: vscode.ExtensionContext) {
                 'Cat Coding',
                 vscode.ViewColumn.One,
                 {
-                    // Enable scripts in the webview
                     enableScripts: true
                 }
             );
+
             panel.webview.html = getWebviewContent();
+
+            // Handle messages from the webview
+            panel.webview.onDidReceiveMessage(message => {
+                switch (message.command) {
+                    case 'alert':
+                        vscode.window.showErrorMessage(message.text);
+                        return;
+                }
+            }, undefined, context.subscriptions);
         })
     );
 }
 
-
 function getWebviewContent() {
-    return `<!DOCTYPE html>
+    return `
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,12 +40,23 @@ function getWebviewContent() {
     <h1 id="lines-of-code-counter">0</h1>
 
     <script>
-        const counter = document.getElementById('lines-of-code-counter');
+        (function() {
+            const vscode = acquireVsCodeApi();
+            const counter = document.getElementById('lines-of-code-counter');
 
-        let count = 0;
-        setInterval(() => {
-            counter.textContent = count++;
-        }, 100);
+            let count = 0;
+            setInterval(() => {
+                counter.textContent = count++;
+
+                // Alert the extension when our cat introduces a bug
+                if (Math.random() < 0.001 * count) {
+                    vscode.postMessage({
+                        command: 'alert',
+                        text: '🐛  on line ' + count
+                    })
+                }
+            }, 100);
+        }())
     </script>
 </body>
 </html>`;

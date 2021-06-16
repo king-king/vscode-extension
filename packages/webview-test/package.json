@@ -14,8 +14,7 @@
     ],
     "main": "./dist/extension.js",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "catCoding.start",
                 "title": "Start new cat coding session",
                 "category": "Cat Coding"
