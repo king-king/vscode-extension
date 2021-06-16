@@ -1,11 +1,5 @@
 import * as vscode from 'vscode';
 
-const cats = {
-    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
-    'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif'
-};
-
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('catCoding.start', () => {
@@ -13,34 +7,22 @@ export function activate(context: vscode.ExtensionContext) {
                 'catCoding',
                 'Cat Coding',
                 vscode.ViewColumn.One,
-                {}
-            );
-            panel.webview.html = getWebviewContent('Coding Cat');
-
-            // Update contents based on view state changes
-            panel.onDidChangeViewState(e => {
-                const curPanel = e.webviewPanel;
-                console.log(panel.viewColumn, curPanel.viewColumn);
-                switch (curPanel.viewColumn) {
-                    case vscode.ViewColumn.One:
-                        updateWebviewForCat(curPanel, 'Coding Cat');
-                        return;
-                    case vscode.ViewColumn.Two:
-                        updateWebviewForCat(curPanel, 'Compiling Cat');
-                        return;
-                    case vscode.ViewColumn.Three:
-                        updateWebviewForCat(curPanel, 'Testing Cat');
-                        return;
+                {
+                    // Only allow the webview to access resources in our extension's media directory
+                    localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
                 }
-            }, null, context.subscriptions);
+            );
+
+            const onDiskPath = vscode.Uri.file(
+                path.join(context.extensionPath, 'media', 'cat.gif')
+            );
+            const catGifSrc = panel.webview.asWebviewUri(onDiskPath);
+
+            panel.webview.html = getWebviewContent(catGifSrc);
         })
     );
 }
 
-function updateWebviewForCat(panel: vscode.WebviewPanel, catName: keyof typeof cats) {
-    panel.title = catName;
-    panel.webview.html = getWebviewContent(catName);
-}
 
 function getWebviewContent(cat: keyof typeof cats) {
     return `<!DOCTYPE html>
@@ -51,7 +33,7 @@ function getWebviewContent(cat: keyof typeof cats) {
     <title>Cat Coding</title>
 </head>
 <body>
-    <img src="${cats[cat]}" width="300" />
+    <img src="${cat}" width="300" />
 </body>
 </html>`;
 }
