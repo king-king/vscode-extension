@@ -9,21 +9,17 @@ export function activate(context: vscode.ExtensionContext) {
                 'Cat Coding',
                 vscode.ViewColumn.One,
                 {
-                    // Only allow the webview to access resources in our extension's media directory
-                    localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
+                    // Enable scripts in the webview
+                    enableScripts: true
                 }
             );
-            const onDiskPath = vscode.Uri.file(
-                path.join(context.extensionPath, 'media', 'cat.gif')
-            );
-            const catGifSrc = panel.webview.asWebviewUri(onDiskPath);
-            panel.webview.html = getWebviewContent(catGifSrc);
+            panel.webview.html = getWebviewContent();
         })
     );
 }
 
 
-function getWebviewContent(cat) {
+function getWebviewContent() {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +28,17 @@ function getWebviewContent(cat) {
     <title>Cat Coding</title>
 </head>
 <body>
-    <img src="${cat}" width="300" />
+    <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="300" />
+    <h1 id="lines-of-code-counter">0</h1>
+
+    <script>
+        const counter = document.getElementById('lines-of-code-counter');
+
+        let count = 0;
+        setInterval(() => {
+            counter.textContent = count++;
+        }, 100);
+    </script>
 </body>
 </html>`;
 }
