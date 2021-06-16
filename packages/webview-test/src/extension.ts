@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -12,19 +13,17 @@ export function activate(context: vscode.ExtensionContext) {
                     localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'media'))]
                 }
             );
-
             const onDiskPath = vscode.Uri.file(
                 path.join(context.extensionPath, 'media', 'cat.gif')
             );
             const catGifSrc = panel.webview.asWebviewUri(onDiskPath);
-
             panel.webview.html = getWebviewContent(catGifSrc);
         })
     );
 }
 
 
-function getWebviewContent(cat: keyof typeof cats) {
+function getWebviewContent(cat) {
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
