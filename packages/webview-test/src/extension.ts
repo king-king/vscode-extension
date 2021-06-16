@@ -1,32 +1,38 @@
 import * as vscode from 'vscode';
 
-const cats = {
-    'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-    'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif'
-};
-
 export function activate(context: vscode.ExtensionContext) {
+    // Track currently webview panel
+    let currentPanel: vscode.WebviewPanel | undefined = undefined;
+
     context.subscriptions.push(
         vscode.commands.registerCommand('catCoding.start', () => {
-            // Create and show a new webview
-            const panel = vscode.window.createWebviewPanel(
-                'catCoding', // Identifies the type of the webview. Used internally
-                'Cat Coding', // Title of the panel displayed to the user
-                vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-                {} // Webview options. More on these later.
-            );
-            let iteration = 0;
-            const updateWebview = () => {
-                const cat = iteration++ % 2 ? 'Compiling Cat' : 'Coding Cat';
-                panel.title = cat;
-                panel.webview.html = getWebviewContent(cat);
-            };
+            const columnToShowIn = vscode.window.activeTextEditor
+                ? vscode.window.activeTextEditor.viewColumn
+                : undefined;
 
-            // Set initial content
-            updateWebview();
+            if (currentPanel) {
+                // If we already have a panel, show it in the target column
+                currentPanel.reveal(columnToShowIn);
+            } else {
+                // Otherwise, create a new panel
+                currentPanel = vscode.window.createWebviewPanel(
+                    'catCoding',
+                    'Cat Coding',
+                    columnToShowIn,
+                    {}
+                );
+                currentPanel.webview.html = getWebviewContent('Coding Cat');
 
-            // And schedule updates to the content every second
-            setInterval(updateWebview, 1000);
+                // Reset when the current panel is closed
+                currentPanel.onDidDispose(
+                    () => {
+                        currentPanel = undefined;
+                        console.log('onDidDispose');
+                    },
+                    null,
+                    context.subscriptions
+                );
+            }
         })
     );
 }
@@ -40,7 +46,7 @@ function getWebviewContent(cat: keyof typeof cats) {
     <title>Cat Coding</title>
 </head>
 <body>
-    <img src="${cats[cat]}" width="300" />
+    <img src="https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif" width="300" />
 </body>
 </html>`;
 }
